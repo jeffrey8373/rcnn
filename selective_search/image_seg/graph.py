@@ -47,8 +47,8 @@ def create_edge(img, width, x, y, x1, y1, diff):
 
 def build_graph(img, width, height, diff, neighborhood_8=False):
     graph_edges = []
-    for y in range(height):
-        for x in range(width):
+    for y in range(height):#275
+        for x in range(width):#183
             if x > 0:
                 graph_edges.append(create_edge(img, width, x, y, x-1, y, diff))
 

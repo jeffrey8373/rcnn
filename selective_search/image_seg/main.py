@@ -6,6 +6,8 @@ from random import random
 from PIL import Image, ImageFilter
 from skimage import io
 import numpy as np
+import os 
+import matplotlib.pyplot as plt
 
 
 def diff(img, x1, y1, x2, y2):
@@ -44,8 +46,20 @@ def get_segmented_image(sigma, neighbor, K, min_comp_size, input_file, output_fi
     # Gaussian Filter
     gaus_filter = ImageFilter.GaussianBlur(sigma)
     smooth = image_file.filter(gaus_filter)
-    smooth = np.array(smooth)
     
+
+    # plt.subplot(121)
+    # plt.title("Before Smooth")
+    # plt.imshow(image_file)
+
+    # plt.subplot(122)
+    # plt.title("After Smooth")
+    # smooth = np.array(smooth)
+    # plt.imshow(smooth)
+    # plt.show()
+
+    
+
     logger.info("Creating graph...")
     graph_edges = build_graph(smooth, size[1], size[0], diff, neighbor==8)
     
@@ -61,19 +75,21 @@ def get_segmented_image(sigma, neighbor, K, min_comp_size, input_file, output_fi
 
 
 if __name__ == '__main__':
+    #print(os.getcwd())
+    path = os.path.abspath(os.path.dirname(__file__))
     # argument parser
     parser = argparse.ArgumentParser(description='Graph-based Segmentation')
     parser.add_argument('--sigma', type=float, default=1.0, 
                         help='a float for the Gaussin Filter')
     parser.add_argument('--neighbor', type=int, default=8, choices=[4, 8],
                         help='choose the neighborhood format, 4 or 8')
-    parser.add_argument('--K', type=float, default=10.0, 
+    parser.add_argument('--K', type=float, default=20.0, 
                         help='a constant to control the threshold function of the predicate')
-    parser.add_argument('--min-comp-size', type=int, default=2000, 
+    parser.add_argument('--min-comp-size', type=int, default=5000, 
                         help='a constant to remove all the components with fewer number of pixels')
-    parser.add_argument('--input-file', type=str, default="./assets/seg_test.jpg", 
+    parser.add_argument('--input-file', type=str, default= path+ "/assets/seg_test.jpg", 
                         help='the file path of the input image')
-    parser.add_argument('--output-file', type=str, default="./assets/seg_test_out.jpg", 
+    parser.add_argument('--output-file', type=str, default= path+"/assets/seg_test_out.jpg", 
                         help='the file path of the output image')
     args = parser.parse_args()
 
