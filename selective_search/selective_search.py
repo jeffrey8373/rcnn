@@ -8,6 +8,7 @@ import skimage.transform
 import skimage.util
 import skimage.segmentation
 import numpy
+import matplotlib.pyplot as plt
 
 
 # "Selective Search for Object Recognition" by J.R.R. Uijlings et al.
@@ -25,11 +26,17 @@ def _generate_segments(im_orig, scale, sigma, min_size):
     im_mask = skimage.segmentation.felzenszwalb(
         skimage.util.img_as_float(im_orig), scale=scale, sigma=sigma,
         min_size=min_size)
+    
+    plt.imshow(im_mask)
+    plt.show()
 
     # merge mask channel to the image as a 4th channel
     im_orig = numpy.append(
         im_orig, numpy.zeros(im_orig.shape[:2])[:, :, numpy.newaxis], axis=2)
     im_orig[:, :, 3] = im_mask
+
+    plt.imshow(im_orig)
+    plt.show()
 
     return im_orig
 
@@ -93,6 +100,8 @@ def _calc_colour_hist(img):
 
     # L1 normalize
     hist = hist / len(img)
+    plt.imshow(hist)
+    plt.show()
 
     return hist
 
@@ -107,8 +116,8 @@ def _calc_texture_gradient(img):
     ret = numpy.zeros((img.shape[0], img.shape[1], img.shape[2]))
 
     for colour_channel in (0, 1, 2):
-        ret[:, :, colour_channel] = skimage.feature.local_binary_pattern(
-            img[:, :, colour_channel], 8, 1.0)
+        a = skimage.feature.local_binary_pattern(img[:, :, colour_channel], 8, 1.0)
+        ret[:, :, colour_channel] = a
 
     return ret
 
@@ -146,6 +155,8 @@ def _extract_regions(img):
 
     # get hsv image
     hsv = skimage.color.rgb2hsv(img[:, :, :3])
+    plt.imshow(hsv)
+    plt.show()
 
     # pass 1: count pixel positions
     for y, i in enumerate(img):

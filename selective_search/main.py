@@ -4,19 +4,28 @@ from __future__ import (
     print_function,
 )
 
+import os 
+import sys
+import numpy as np
 import skimage.data
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import selectivesearch
+from PIL import Image, ImageFilter
+import selective_search
 
 
 def main():
 
     # loading astronaut image
-    img = skimage.data.astronaut()
+    #img = skimage.data.astronaut()
+    path = os.path.abspath(os.path.dirname(__file__))
+    image = Image.open(path+"/test.jpg",mode="r")
+    img = np.asarray(image)
+    plt.imshow(img)
+    plt.show()
 
     # perform selective search
-    img_lbl, regions = selectivesearch.selective_search(
+    img_lbl, regions = selective_search.selective_search(
         img, scale=500, sigma=0.9, min_size=10)
 
     candidates = set()
@@ -45,4 +54,6 @@ def main():
     plt.show()
 
 if __name__ == "__main__":
+    print(sys.version)
+    print(sys.version_info)
     main()
