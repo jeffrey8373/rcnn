@@ -7,7 +7,10 @@ import skimage.color
 import skimage.transform
 import skimage.util
 import skimage.segmentation
-import numpy
+import numpy 
+import os
+from PIL import Image, ImageFilter
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 
 
@@ -28,7 +31,8 @@ def _generate_segments(im_orig, scale, sigma, min_size):
         min_size=min_size)
     
     plt.imshow(im_mask)
-    plt.show()
+    #plt.show()
+    plt.savefig("mask.jpg")
 
     # merge mask channel to the image as a 4th channel
     im_orig = numpy.append(
@@ -36,7 +40,8 @@ def _generate_segments(im_orig, scale, sigma, min_size):
     im_orig[:, :, 3] = im_mask
 
     plt.imshow(im_orig)
-    plt.show()
+    #plt.show()
+    plt.savefig("origin+mask.jpg")
 
     return im_orig
 
@@ -100,8 +105,8 @@ def _calc_colour_hist(img):
 
     # L1 normalize
     hist = hist / len(img)
-    plt.imshow(hist)
-    plt.show()
+    #plt.imshow(hist)
+    #plt.show()
 
     return hist
 
@@ -156,7 +161,8 @@ def _extract_regions(img):
     # get hsv image
     hsv = skimage.color.rgb2hsv(img[:, :, :3])
     plt.imshow(hsv)
-    plt.show()
+    #plt.show()
+    plt.savefig("hsv.jpg")
 
     # pass 1: count pixel positions
     for y, i in enumerate(img):
@@ -178,6 +184,19 @@ def _extract_regions(img):
                 R[l]["max_x"] = x
             if R[l]["max_y"] < y:
                 R[l]["max_y"] = y
+    path = os.path.abspath(os.path.dirname(__file__))
+    image1 = Image.open(path+"/seg_test.jpg",mode="r")
+    img1 = numpy.asarray(image1)
+
+    plt.imshow(img1)
+    #plt.savefig("bbox.jpg")
+    for l in R:
+        currentAxis=plt.gca()
+        rect=patches.Rectangle((R[l]["min_x"], R[l]["min_y"]),
+        R[l]["max_x"]-R[l]["min_x"],R[l]["max_y"]-R[l]["min_y"],linewidth=1,edgecolor='r',facecolor='none')
+        currentAxis.add_patch(rect)
+    plt.savefig("bbox.jpg")
+
 
     # pass 2: calculate texture gradient
     tex_grad = _calc_texture_gradient(img)

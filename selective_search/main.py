@@ -19,10 +19,22 @@ def main():
     # loading astronaut image
     #img = skimage.data.astronaut()
     path = os.path.abspath(os.path.dirname(__file__))
-    image = Image.open(path+"/test.jpg",mode="r")
+    image = Image.open(path+"/seg_test.jpg",mode="r")
     img = np.asarray(image)
-    plt.imshow(img)
-    plt.show()
+    #plt.imshow(img)
+    #plt.savefig("origin.jpg")
+
+    plt.hist(img[:,:,0],100, facecolor="red", edgecolor="black", alpha=0.7)
+    plt.savefig("origin_his_red.jpg")
+    plt.clf
+
+    plt.hist(img[:,:,1],100, facecolor="red", edgecolor="black", alpha=0.7)
+    plt.savefig("origin_his_green.jpg")
+    plt.clf
+
+    plt.hist(img[:,:,2],100, facecolor="red", edgecolor="black", alpha=0.7)
+    plt.savefig("origin_his_blue.jpg")
+    plt.clf
 
     # perform selective search
     img_lbl, regions = selective_search.selective_search(
@@ -51,7 +63,7 @@ def main():
             (x, y), w, h, fill=False, edgecolor='red', linewidth=1)
         ax.add_patch(rect)
 
-    plt.show()
+    #plt.show()
 
 if __name__ == "__main__":
     print(sys.version)
